@@ -4,7 +4,7 @@ import unittest
 import sys  # Import the sys module
 
 class TestProgram(unittest.TestCase):
-    test_dir = './tests'
+    test_dir = './test'
     prog_dir = './prog'
 
     def run_test(self, program, test_name, use_args):
