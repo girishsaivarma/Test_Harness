@@ -1,56 +1,51 @@
 import subprocess
-import sys
 import os
+import unittest
 
-def run_test(test_script, input_file, expected_output_file):
-    # Run the utility script with the input file and capture the output
-    with open(input_file, 'r') as infile, open(expected_output_file, 'r') as expectedfile:
-        try:
-            # Execute the script using the Python interpreter
-            result = subprocess.run(
-                [sys.executable, test_script],
-                stdin=infile,
-                text=True,
-                capture_output=True
-            )
-            expected_output = expectedfile.read()
-            return (result.stdout == expected_output, result.stderr, result.returncode)
-        except subprocess.CalledProcessError as e:
-            return (False, e.stderr, e.returncode)
+class TestProgram(unittest.TestCase):
+    test_dir = './tests'
+    prog_dir = './src'
 
-def main(tests_dir, test_script):
-    # Find all test input files
-    input_files = [f for f in os.listdir(tests_dir) if f.endswith('_input.txt')]
-    
-    # Run each test
-    for input_file in input_files:
-        test_name = input_file[:-10]  # remove '_input.txt'
-        expected_output_file = f"{test_name}_expected.txt"
-        
-        # Check if the expected output file exists
-        if not os.path.isfile(os.path.join(tests_dir, expected_output_file)):
-            print(f"Expected output file for {test_name} does not exist. Skipping.")
-            continue
-        
-        print(f"Running test: {test_name}")
-        success, stderr, exit_code = run_test(
-            test_script,
-            os.path.join(tests_dir, input_file),
-            os.path.join(tests_dir, expected_output_file)
-        )
-        
-        if success:
-            print(f"Test {test_name} passed!")
-        else:
-            print(f"Test {test_name} failed!")
-            print(f"STDERR: {stderr}")
-            print(f"Exit Code: {exit_code}")
+    def run_test(self, program, test_name, use_args):
+        input_file = f'{self.test_dir}/{program}.{test_name}.in'
+        expected_file = f'{self.test_dir}/{program}.{test_name}' + ('.arg.out' if use_args else '.out')
+        cmd = [sys.executable, os.path.join(self.prog_dir, f'{program}.py')]
+
+        # Read the input content
+        with open(input_file, 'r') as f:
+            input_content = f.read()
+
+        if program == 'gron':
+            # If 'gron', expect a JSON file as an argument
+            cmd.append(input_file)
+        elif program == 'wc' and not use_args:
+            # For 'wc', when use_args is False, the content should be passed through STDIN
+            process = subprocess.run(cmd, input=input_content, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            self._assert_process_output(process, expected_file, test_name, program, use_args)
+            return
+
+        process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self._assert_process_output(process, expected_file, test_name, program, use_args)
+
+    def _assert_process_output(self, process, expected_file, test_name, program, use_args):
+        # Check if the process exited with a non-zero status
+        self.assertEqual(process.returncode, 0, f"Program exited with {process.returncode}. Error: {process.stderr}")
+
+        # Compare the actual output to the expected output
+        actual_output = process.stdout.strip()
+        with open(expected_file, 'r') as f:
+            expected_output = f.read().strip()
+
+        self.assertEqual(actual_output, expected_output, f'Failed test: {test_name} for {program} with {"arguments" if use_args else "stdin"}')
+
+    def test_programs(self):
+        # Test 'wc' program without command line arguments
+        self.run_test('wc', 'test1', False)
+
+        # Test 'gron' program with command line arguments
+        self.run_test('gron', 'test1', True)
+
+        # Add tests for other programs as needed, with the correct use_args setting
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: python test_harness.py <tests_dir> <test_script>")
-        sys.exit(1)
-    
-    tests_dir = sys.argv[1]
-    test_script = sys.argv[2]
-    main(tests_dir, test_script)
+    unittest.main()
