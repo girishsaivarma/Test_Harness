@@ -52,13 +52,13 @@ class TestProgram(unittest.TestCase):
 
     def test_programs(self):
         # Test 'wc' program without command line arguments
-        self.run_test('wc', 'test1', False)
+        self.run_test('wc', 'test', False)
 
         # Test 'gron' program with command line arguments
-        self.run_test('gron', 'test1', True)
+        self.run_test('gron', 'test', True)
 
         # Test 'ini2json' program without command line arguments
-        self.run_test('ini2json', 'test1', False)
+        self.run_test('ini2json', 'test', False)
 
 if __name__ == '__main__':
     unittest.main()
