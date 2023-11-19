@@ -2,8 +2,8 @@
 
 ## Personal Information
 
-- Name: [Your Name]
-- Stevens Login: [Stevens ID]
+- Name: [Girish Sai Varma Penumathsa]
+- Stevens Login: ["gpenumat@stevens.edu"]
 
 ## Repository URL
 https://github.com/girishsaivarma/Test_Harness.git
