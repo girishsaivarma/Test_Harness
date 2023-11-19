@@ -1,10 +1,11 @@
 import subprocess
 import os
 import unittest
+import sys  # Import the sys module
 
 class TestProgram(unittest.TestCase):
     test_dir = './tests'
-    prog_dir = './src'
+    prog_dir = './prog'
 
     def run_test(self, program, test_name, use_args):
         input_file = f'{self.test_dir}/{program}.{test_name}.in'
