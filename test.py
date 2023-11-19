@@ -26,13 +26,23 @@ class TestProgram(unittest.TestCase):
             self._assert_process_output(process, expected_file, test_name, program, use_args)
             return
 
-        elif program == 'wc' and not use_args:
-            # For 'wc', when use_args is False, the content should be passed through STDIN
+        elif program == 'wc':
+            if use_args:
+                cmd.append(input_file)
+        
             # Print the command for debugging purposes
             print(f'Executing command: {" ".join(cmd)}')
-            process = subprocess.run(cmd, input=input_content, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+            # Execute the command
+            process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             self._assert_process_output(process, expected_file, test_name, program, use_args)
-            return
+            elif not use_args:
+                # For 'wc', when use_args is False, the content should be passed through STDIN
+                # Print the command for debugging purposes
+                print(f'Executing command: {" ".join(cmd)}')
+                process = subprocess.run(cmd, input=input_content, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                self._assert_process_output(process, expected_file, test_name, program, use_args)
+                return
 
         # For other programs, run the command normally
         process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
