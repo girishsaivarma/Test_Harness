@@ -47,6 +47,7 @@ class TestProgram(unittest.TestCase):
         self.run_test('gron', 'test', True)
 
         # Add tests for other programs as needed, with the correct use_args setting
+        self.run_test('ini2json', 'test', False)
 
 if __name__ == '__main__':
     unittest.main()
