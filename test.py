@@ -30,12 +30,13 @@ class TestProgram(unittest.TestCase):
             if use_args:
                 cmd.append(input_file)
         
-            # Print the command for debugging purposes
-            print(f'Executing command: {" ".join(cmd)}')
-        
-            # Execute the command
-            process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            self._assert_process_output(process, expected_file, test_name, program, use_args)
+                # Print the command for debugging purposes
+                print(f'Executing command: {" ".join(cmd)}')
+            
+                # Execute the command
+                process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                self._assert_process_output(process, expected_file, test_name, program, use_args)
+                
             elif not use_args:
                 # For 'wc', when use_args is False, the content should be passed through STDIN
                 # Print the command for debugging purposes
