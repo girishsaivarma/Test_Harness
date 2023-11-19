@@ -64,7 +64,7 @@ class TestProgram(unittest.TestCase):
         self.run_test('gron', 'test', True)
 
         # Test 'ini2json' program without command line arguments
-        self.run_test('ini2json', 'test', False)
+        self.run_test('ini2json', 'test', True)
 
 if __name__ == '__main__':
     unittest.main()
