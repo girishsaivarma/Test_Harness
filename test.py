@@ -1,7 +1,8 @@
 import subprocess
 import os
 import unittest
-import sys  # Import the sys module
+import sys
+import json
 
 class TestProgram(unittest.TestCase):
     test_dir = './test'
@@ -25,6 +26,7 @@ class TestProgram(unittest.TestCase):
             self._assert_process_output(process, expected_file, test_name, program, use_args)
             return
 
+        # For other programs, run the command normally
         process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self._assert_process_output(process, expected_file, test_name, program, use_args)
 
@@ -32,22 +34,31 @@ class TestProgram(unittest.TestCase):
         # Check if the process exited with a non-zero status
         self.assertEqual(process.returncode, 0, f"Program exited with {process.returncode}. Error: {process.stderr}")
 
-        # Compare the actual output to the expected output
+        # Get the actual output from the program
         actual_output = process.stdout.strip()
+
+        # Compare the actual output to the expected output
         with open(expected_file, 'r') as f:
             expected_output = f.read().strip()
 
-        self.assertEqual(actual_output, expected_output, f'Failed test: {test_name} for {program} with {"arguments" if use_args else "stdin"}')
+        if program == 'ini2json':
+            # For 'ini2json', we need to compare JSON structures
+            actual_json = json.loads(actual_output)
+            expected_json = json.loads(expected_output)
+            self.assertDictEqual(actual_json, expected_json, f'Failed test: {test_name} for {program} with {"arguments" if use_args else "stdin"}')
+        else:
+            # For other programs, compare output as text
+            self.assertEqual(actual_output, expected_output, f'Failed test: {test_name} for {program} with {"arguments" if use_args else "stdin"}')
 
     def test_programs(self):
         # Test 'wc' program without command line arguments
-        self.run_test('wc', 'test', False)
+        self.run_test('wc', 'test1', False)
 
         # Test 'gron' program with command line arguments
-        self.run_test('gron', 'test', True)
+        self.run_test('gron', 'test1', True)
 
-        # Add tests for other programs as needed, with the correct use_args setting
-        self.run_test('ini2json', 'test', False)
+        # Test 'ini2json' program without command line arguments
+        self.run_test('ini2json', 'test1', False)
 
 if __name__ == '__main__':
     unittest.main()
