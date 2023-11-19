@@ -36,10 +36,16 @@ class TestProgram(unittest.TestCase):
 
         # Get the actual output from the program
         actual_output = process.stdout.strip()
+        
+        # Debugging: Print the actual output
+        print(f'Actual output for {test_name}: {actual_output}')
 
         # Compare the actual output to the expected output
         with open(expected_file, 'r') as f:
             expected_output = f.read().strip()
+
+        # Debugging: Print the expected output
+        print(f'Expected output for {test_name}: {expected_output}')
 
         if program == 'ini2json':
             # For 'ini2json', we need to compare JSON structures
