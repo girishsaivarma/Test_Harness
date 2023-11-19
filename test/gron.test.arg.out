@@ -1,0 +1,5 @@
+name = "Girish"
+age = 30
+cars.car1 = "Ford"
+cars.car2 = "BMW"
+cars.car3 = "Fiat"
