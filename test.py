@@ -20,6 +20,10 @@ class TestProgram(unittest.TestCase):
         if program == 'gron':
             # If 'gron', expect a JSON file as an argument
             cmd.append(input_file)
+        elif program == 'ini2json':
+            # For 'ini2json', when use_args is False, the content should be passed through STDIN
+            process = subprocess.run(cmd, input=input_content, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
         elif program == 'wc' and not use_args:
             # For 'wc', when use_args is False, the content should be passed through STDIN
             process = subprocess.run(cmd, input=input_content, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
