@@ -41,10 +41,10 @@ class TestProgram(unittest.TestCase):
 
     def test_programs(self):
         # Test 'wc' program without command line arguments
-        self.run_test('wc', 'test1', False)
+        self.run_test('wc', 'test', False)
 
         # Test 'gron' program with command line arguments
-        self.run_test('gron', 'test1', True)
+        self.run_test('gron', 'test', True)
 
         # Add tests for other programs as needed, with the correct use_args setting
 
